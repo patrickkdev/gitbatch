@@ -12,7 +12,11 @@ I built this tool because, while working with clients who had multiple websites 
 
 * **Safe:** Avoid running commands in non-repositories. Destructive operations like `push --force` require confirmation.
 * **Simple:** Small, predictable CLI with explicit flags.
-* **Practical:** Supports recursive globbing (`**`) and streams output so you can debug per-repo issues.
+* **Reliable repository detection:** Uses `git rev-parse --is-inside-work-tree` instead of just checking for a `.git` folder.
+* **Interactive confirmation for dangerous commands:** Pushes prompt for confirmation by default to prevent mass accidents.
+* **Globbing with doublestar:** Enables recursive patterns like `projects/**/microservice-*` across platforms.
+* **Built with Cobra:** Subcommands, flags, and help messages follow familiar patterns, making the CLI intuitive and easy to extend.
+* **Streamed output & timeouts:** See logs/errors per repository immediately. Commands have sane timeouts to prevent hangs.
 
 ---
 
@@ -26,17 +30,6 @@ go install github.com/patrickkdev/gitbatch@latest
 ```
 
 This places the `gitbatch` binary in `$GOPATH/bin` or `$GOBIN`.
-
----
-
-## Philosophy & Design Decisions
-
-* **Reliable repository detection:** Uses `git rev-parse --is-inside-work-tree` instead of just checking for a `.git` folder. This works better with Git worktrees and nested setups.
-* **Interactive confirmation for dangerous commands:** Pushes prompt for confirmation by default to prevent mass accidents.
-* **Globbing with doublestar:** Enables recursive patterns like `projects/**/microservice-*` across platforms.
-* **Built with Cobra:** Subcommands, flags, and help messages follow familiar patterns, making the CLI intuitive and easy to extend.
-* **Streamed output & timeouts:** See logs/errors per repository immediately. Commands have sane timeouts to prevent hangs.
-* **Sequential execution by default:** Safe and predictable; concurrency can be added later with a `--concurrency` flag.
 
 ---
 
@@ -131,35 +124,22 @@ gitbatch push --yes --force repos/*
 
 * CLI built with **Cobra** for commands and flags.
 * Uses **doublestar** for recursive glob support.
-* Repository detection via `git rev-parse --is-inside-work-tree`.
-* Commands stream stdout/stderr per repository.
-* Each Git invocation runs with a default timeout to avoid hangs.
 
 ---
 
 ## Safety & Best Practices
 
-* **Review output** before committing/pushing. You’re still responsible for changes.
+* **Review output** before committing/pushing.
 * **Use `--yes` only in trusted automation contexts**.
-* **Avoid `--force` unless necessary**. Force-pushing rewrites history and can affect collaborators.
 
 ---
 
 ## Future Ideas
 
-* `--concurrency` to run commands in parallel with per-repo timeouts.
 * `--dry-run` to preview actions without modifying repositories.
-* Interactive per-repo filtering or push confirmation.
 
 ---
 
 ## Contributing
 
 Bug reports, PRs, and improvements are welcome. Please follow Go conventions, add tests for new behavior, and keep changes focused.
-
----
-
-## License
-
-This project is licensed under the **Apache License 2.0**.  
-See the [LICENSE](./LICENSE) file for details.
